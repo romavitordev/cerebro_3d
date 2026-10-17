@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Exemplo de integração</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #f6f3ef; color: #1d1d1f; }
+  header, section { max-width: 1200px; margin: 0 auto; padding: 48px 24px; }
+  h1 { font: 400 48px/1.05 'Instrument Serif', serif; margin: 0 0 12px; }
+  p { max-width: 640px; line-height: 1.6; color: #55555a; }
+  atlas-cerebral { height: 720px; border-radius: 24px; }
+  #log { font-size: 14px; color: #55555a; margin-top: 16px; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  .chips button { border: 1px solid #ddd5cc; background: #fff; border-radius: 999px; padding: 8px 14px; cursor: pointer; font: inherit; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Seu cérebro em 3D</h1>
+    <p>Exemplo de como o componente <code>&lt;atlas-cerebral&gt;</code> entra numa página comum: ele ocupa só o espaço que você der a ele e conversa com o resto do site por eventos.</p>
+    <div class="chips">
+      <button data-k="hippocampus">Ver o hipocampo</button>
+      <button data-k="frontal">Ver o lobo frontal</button>
+      <button data-cut="coronal">Fatiar de frente</button>
+      <button data-reset>Voltar</button>
+    </div>
+    <div id="log">Clique numa parte do cérebro…</div>
+  </header>
+  <section>
+    <atlas-cerebral id="atlas">
+      <div slot="title"></div>
+    </atlas-cerebral>
+  </section>
+
+  <script type="module">
+    import './atlas-cerebral/atlas-cerebral.js';
+    const atlas = document.getElementById('atlas');
+    atlas.addEventListener('atlas-select', (e) => {
+      document.getElementById('log').textContent = e.detail ? `Selecionado: ${e.detail.name}` : 'Nada selecionado';
+    });
+    document.querySelectorAll('[data-k]').forEach((b) => b.onclick = async () => (await atlas.ready).select(b.dataset.k));
+    document.querySelectorAll('[data-cut]').forEach((b) => b.onclick = async () => (await atlas.ready).setCut(b.dataset.cut));
+    document.querySelector('[data-reset]').onclick = async () => (await atlas.ready).reset();
+  </script>
+</body>
+</html>
